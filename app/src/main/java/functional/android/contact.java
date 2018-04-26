@@ -11,6 +11,7 @@ import java.util.List;
 import rebeccapurple.Condition;
 import rebeccapurple.Listener;
 import rebeccapurple.android.contact.Content;
+import rebeccapurple.android.contact.Raw;
 
 public class contact {
 
@@ -18,21 +19,21 @@ public class contact {
         if(photo == null){
             photo = new Content.Photo();
         }
-        photo.thumbnail(functional.android.sql.get.string(cursor, Content.DB.COLUMN.BASE.PHOTO_THUMBNAIL_URI));
-        photo.file(functional.android.sql.get.int64(cursor, Content.DB.COLUMN.BASE.PHOTO_FILE_ID));
-        photo.id(functional.android.sql.get.int64(cursor, Content.DB.COLUMN.BASE.PHOTO_ID));
-        photo.uri(functional.android.sql.get.string(cursor, Content.DB.COLUMN.BASE.PHOTO_URI));
+        photo.thumbnail(functional.android.sql.get.string(cursor, Content.DB.COLUMN.PHOTO_THUMBNAIL_URI));
+        photo.file(functional.android.sql.get.int64(cursor, Content.DB.COLUMN.PHOTO_FILE_ID));
+        photo.id(functional.android.sql.get.int64(cursor, Content.DB.COLUMN.PHOTO_ID));
+        photo.uri(functional.android.sql.get.string(cursor, Content.DB.COLUMN.PHOTO_URI));
         return photo;
     }
 
-    public static Content.Base base(Cursor cursor, Content.Base base){
+    public static Content base(Cursor cursor, Content base){
         if(base == null){
-            base = new Content.Base();
+            base = new Content();
         }
-        base.id(functional.android.sql.get.int64(cursor, Content.DB.COLUMN.BASE.ID));
-        base.raw(functional.android.sql.get.int64(cursor, Content.DB.COLUMN.BASE.NAME_RAW_CONTACT_ID));
-        base.name(functional.android.sql.get.string(cursor, Content.DB.COLUMN.BASE.DISPLAY_NAME));
-        base.lookup(functional.android.sql.get.string(cursor, Content.DB.COLUMN.BASE.LOOKUP));
+        base.id(functional.android.sql.get.int64(cursor, Content.DB.COLUMN.ID));
+        // base.raw(functional.android.sql.get.int64(cursor, Content.DB.COLUMN.NAME_RAW_CONTACT_ID));
+        base.name(functional.android.sql.get.string(cursor, Content.DB.COLUMN.DISPLAY_NAME));
+        base.lookup(functional.android.sql.get.string(cursor, Content.DB.COLUMN.LOOKUP));
         base.photo = photo(cursor, base.photo);
         return base;
     }
@@ -84,6 +85,14 @@ public class contact {
         return phonetic;
     }
 
+    public static Raw raw(Cursor cursor, Raw raw){
+        if(raw == null){
+            raw = new Raw();
+        }
+        raw.id(functional.android.sql.get.int64(cursor, Content.DB.COLUMN.NAME_RAW_CONTACT_ID));
+        return raw;
+    }
+
     public static List<Content> all(Context context, Uri uri){ return all(context, uri, null, null, null); }
     public static List<Content> all(Context context, Uri uri, Listener<Content> callback){ return  all(context, uri, null, null, callback); }
     public static List<Content> all(Context context, Uri uri, String sort){ return  all(context, uri, sort, null, null); }
@@ -102,14 +111,11 @@ public class contact {
                 cursor.moveToFirst();
                 for(int i  = 0; i < total; i++){
                     if(condition == null || condition.check(cursor)){
-                        Content o = new Content();
-                        o.base = contact.base(cursor, o.base);
+                        Content o = contact.base(cursor, new Content());
+                        o.raw = contact.raw(cursor, o.raw);
                         o.status = contact.status(cursor, o.status);
                         o.option = contact.option(cursor, o.option);
                         o.name = contact.name(cursor, o.name);
-                        if(callback != null){
-                            callback.on(o);
-                        }
                         contents.add(o);
                         cursor.moveToNext();
                         continue;
@@ -122,6 +128,14 @@ public class contact {
         } finally {
             if(cursor != null){
                 cursor.close();
+            }
+        }
+        if(contents != null){
+            for(Content content : contents){
+                content.raw = raw.get(context, content);
+                if(callback != null){
+                    callback.on(content);
+                }
             }
         }
         return contents;
