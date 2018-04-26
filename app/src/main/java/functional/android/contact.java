@@ -4,13 +4,16 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.ContactsContract;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import rebeccapurple.Condition;
 import rebeccapurple.Listener;
 import rebeccapurple.android.contact.Content;
+import rebeccapurple.android.contact.Data;
 import rebeccapurple.android.contact.Raw;
 
 public class contact {
@@ -133,11 +136,137 @@ public class contact {
         if(contents != null){
             for(Content content : contents){
                 content.raw = raw.get(context, content);
+                content.data = data.get(context, content);
                 if(callback != null){
                     callback.on(content);
                 }
             }
         }
         return contents;
+    }
+
+    public static class data {
+        public static List<Data> get(Context context, Content content){
+            if(content != null && content.id() != null){
+                if(content.data == null){
+                    content.data = new ArrayList<>();
+                } else {
+                    content.data.clear();
+                }
+                ContentResolver resolver = context.getContentResolver();
+                Cursor cursor = null;
+                try {
+                    cursor = resolver.query(ContactsContract.Data.CONTENT_URI, null, Data.DB.COLUMN.ID + "=?", new String[]{functional.string.from(content.id())}, null);
+                    if(cursor != null){
+                        int total = cursor.getCount();
+                        cursor.moveToFirst();
+                        for(int i = 0; i < total; i++){
+                            Data o = new Data();
+                            o.id(sql.get.int64(cursor, Data.DB.COLUMN.ID));
+                            o._package(sql.get.string(cursor, Data.DB.COLUMN.PACKAGE));
+                            o._super(sql.get.int64(cursor, Data.DB.COLUMN.SUPER));
+                            o.mimetype(sql.get.string(cursor, Data.DB.COLUMN.MIMETYPE));
+                            o.primary(sql.get.int64(cursor, Data.DB.COLUMN.PRIMARY));
+                            o.readonly(sql.get.int64(cursor, Data.DB.COLUMN.READONLY));
+                            o.data = new ArrayList<>();
+                            o.data.add(sql.get.string(cursor, Data.DB.COLUMN.DATA1));
+                            o.data.add(sql.get.string(cursor, Data.DB.COLUMN.DATA2));
+                            o.data.add(sql.get.string(cursor, Data.DB.COLUMN.DATA3));
+                            o.data.add(sql.get.string(cursor, Data.DB.COLUMN.DATA3));
+                            o.data.add(sql.get.string(cursor, Data.DB.COLUMN.DATA4));
+                            o.data.add(sql.get.string(cursor, Data.DB.COLUMN.DATA5));
+                            o.data.add(sql.get.string(cursor, Data.DB.COLUMN.DATA6));
+                            o.data.add(sql.get.string(cursor, Data.DB.COLUMN.DATA7));
+                            o.data.add(sql.get.string(cursor, Data.DB.COLUMN.DATA8));
+                            o.data.add(sql.get.string(cursor, Data.DB.COLUMN.DATA9));
+                            o.data.add(sql.get.string(cursor, Data.DB.COLUMN.DATA10));
+                            o.data.add(sql.get.string(cursor, Data.DB.COLUMN.DATA11));
+                            o.data.add(sql.get.string(cursor, Data.DB.COLUMN.DATA12));
+                            o.data.add(sql.get.string(cursor, Data.DB.COLUMN.DATA13));
+                            o.data.add(sql.get.string(cursor, Data.DB.COLUMN.DATA14));
+                            o.blob(sql.get.blob(cursor, Data.DB.COLUMN.DATA15));
+                            content.data.add(o);
+                            cursor.moveToNext();
+                        }
+                    } else {
+                        functional.log.e("cursor == null");
+                    }
+                } catch(Throwable e){
+                    functional.log.e("resolver.query(...)", e);
+                } finally {
+                    if(cursor != null){
+                        cursor.close();
+                    }
+                }
+
+
+            } else {
+                functional.log.e("content != null && content.id() != null");
+            }
+            return content != null ? content.data : null;
+        }
+    }
+
+    public static class raw {
+        public static Raw.Sync sync(Cursor cursor, Raw.Sync sync){
+            if(sync == null){
+                sync = new Raw.Sync();
+            }
+            if(sync.data == null){
+                sync.data = new ArrayList<>();
+            } else {
+                sync.data.clear();
+            }
+            sync.data.add(sql.get.string(cursor, Raw.DB.COLUMN.SYNC.FIRST));
+            sync.data.add(sql.get.string(cursor, Raw.DB.COLUMN.SYNC.SECOND));
+            sync.data.add(sql.get.string(cursor, Raw.DB.COLUMN.SYNC.THIRD));
+            sync.data.add(sql.get.string(cursor, Raw.DB.COLUMN.SYNC.FOURTH));
+            sync.dirty(sql.get.int64(cursor, Raw.DB.COLUMN.SYNC.DIRTY));
+            sync.name(sql.get.string(cursor, Raw.DB.COLUMN.SYNC.NAME));
+            sync.source(sql.get.string(cursor, Raw.DB.COLUMN.SYNC.SOURCE));
+            sync.type(sql.get.string(cursor, Raw.DB.COLUMN.SYNC.TYPE));
+            sync.version(sql.get.int64(cursor, Raw.DB.COLUMN.SYNC.VERSION));
+            return sync;
+        }
+
+        public static Raw get(Context context, Content content){
+            if(content != null && content.raw != null && content.raw.id() != null){
+                ContentResolver resolver = context.getContentResolver();
+                Cursor cursor = null;
+                try {
+                    cursor = resolver.query(ContactsContract.RawContacts.CONTENT_URI, null, Raw.DB.COLUMN.ID + "=?", new String[]{functional.string.from(content.raw.id())}, null);
+                    if (cursor != null) {
+                        if(cursor.getCount()==1){
+                            cursor.moveToFirst();
+                            content.raw.account(sql.get.string(cursor, Raw.DB.COLUMN.ACCOUNT));
+                            content.raw.aggregation(sql.get.string(cursor, Raw.DB.COLUMN.AGGREGATION));
+                            content.raw.contact(sql.get.int64(cursor, Raw.DB.COLUMN.CONTACT));
+                            content.raw.dataset(sql.get.string(cursor, Raw.DB.COLUMN.DATASET));
+                            content.raw.deleted(sql.get.int64(cursor, Raw.DB.COLUMN.DELETED));
+                            content.raw.dirty(sql.get.int64(cursor, Raw.DB.COLUMN.DIRTY));
+                            content.raw.profile(sql.get.int64(cursor, Raw.DB.COLUMN.PROFILE));
+                            content.raw.readonly(sql.get.int64(cursor, Raw.DB.COLUMN.READONLY));
+                            content.raw.unique(sql.get.int64(cursor, Raw.DB.COLUMN.UNIQUE));
+                            content.raw.name = name(cursor, content.raw.name);
+                            content.raw.option = option(cursor, content.raw.option);
+                            content.raw.sync = raw.sync(cursor, content.raw.sync);
+                        } else {
+                            functional.log.e("cursor.getCount() = " + cursor.getCount());
+                        }
+                    } else {
+                        functional.log.e("cursor == null");
+                    }
+                } catch(Throwable e){
+                    functional.log.e("resolver.query(...)", e);
+                } finally {
+                    if(cursor != null){
+                        cursor.close();
+                    }
+                }
+            } else {
+                functional.log.e("content.raw == null || content.raw.id() == null");
+            }
+            return content !=null ? content.raw : null;
+        }
     }
 }

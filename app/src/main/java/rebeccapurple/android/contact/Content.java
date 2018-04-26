@@ -6,6 +6,8 @@ import android.provider.ContactsContract;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class Content {
     public static class DB {
         public static class COLUMN {
@@ -164,6 +166,7 @@ public class Content {
     @SerializedName("status") @Expose public Status status;
     @SerializedName("option") @Expose public Option option;
     @SerializedName("name")   @Expose public Name name;
+    @SerializedName("data") @Expose public List<Data> data;
 
     public void id(Long v){ __id = v; }
     public void name(String v){ __name = v; }
