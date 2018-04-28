@@ -10,6 +10,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // functional.contact.data.all(this,functional.log::e);
         functional.contact.all(this, ContactsContract.Contacts.CONTENT_URI, null, null, functional.log::e);
     }
 }
