@@ -13,5 +13,8 @@ public class Application extends android.app.Application {
         functional.log.date(false);                         /** remove date out */
         functional.log.stacktrace(false);                   /** remove stacktrace  */
         functional.log.add(functional.android.log.get());   /** set android log method */
+
+//        functional.contact.init("io.textory", "local");
+//        functional.contact.init("io.textory", "hello@textory.com");
     }
 }

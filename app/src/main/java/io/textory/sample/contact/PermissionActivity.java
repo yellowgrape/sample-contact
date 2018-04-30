@@ -9,7 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 
 public class PermissionActivity extends AppCompatActivity {
     private static String[] PERMISSIONS = {
-            Manifest.permission.READ_CONTACTS
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.WRITE_CONTACTS,
     };
 
     @Override
@@ -18,6 +19,11 @@ public class PermissionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, 1);
+            return;
+        }
+        permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS);
         if (permission != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, PERMISSIONS, 1);
             return;
