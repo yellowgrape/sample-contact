@@ -31,7 +31,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     implementation 'com.google.code.gson:gson:2.8.2'
-    // 2a9debc19fc6d90a489e6674e5d003
-    implementation 'com.github.rebeccapurple:android:0d3aee301a'
+    // 3b71108652876b240dd2ec50daae9b
+    implementation 'com.github.rebeccapurple:android:7d72d7b254'
     implementation 'com.github.rebeccapurple:java:0d4eed3412'
 }

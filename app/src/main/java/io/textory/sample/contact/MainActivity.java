@@ -12,6 +12,7 @@ import android.os.Bundle;
 
 import java.util.ArrayList;
 
+import rebeccapurple.android.contact.Observer;
 import rebeccapurple.android.contact.Raw;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,10 +24,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // functional.contact.init(this, "io.textory"k)
+        functional.contact.init(this, "io.textory", "local",new Observer());
 
         // insert(this, "hello", "000-0000-0000", "hello@textory.com", "dljfdlkajfd");
-        functional.contact.update(this, 2194L, "hello2", "010-0000-0000", "hello2@textory.com", "dljfdlkajfd");
+        functional.contact.update(this, 2194L, "hello7", "010-0000-0000", "hello2@textory.com", "dljfdlkajfd");
         // delete(this, 2195L);
 
         // functional.contact.data.all(this,functional.log::e);
